@@ -1,16 +1,73 @@
-# React + Vite
+# Proyecto de Fullstack EA2 con React js
+Realizado por:
+- Arturo Ayala
+- Valeria Rodríguez
+- Cristóbal Zúñiga
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+# Estructura final
+```
+skyrim-emporium-react/
+├── public/
+│   └── assets/img/...
+├── src/
+│   ├── main.jsx
+│   ├── App.jsx
+│   ├── index.css
+│   ├── data/
+│   │   ├── inventario.js
+│   │   ├── usuarios.js
+│   │   └── regiones.js
+│   ├── context/
+│   │   ├── AuthContext.jsx
+│   │   └── CartContext.jsx
+│   ├── hooks/
+│   │   ├── useAuth.js
+│   │   └── useCart.js
+│   ├── utils/
+│   │   ├── validaciones.js
+│   │   └── formatos.js
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── Footer.jsx
+│   │   │   └── Layout.jsx
+│   │   ├── cart/
+│   │   │   ├── CartDrawer.jsx
+│   │   │   └── CartIcon.jsx
+│   │   ├── catalog/
+│   │   │   ├── ProductCard.jsx
+│   │   │   ├── ProductModal.jsx
+│   │   │   ├── CatalogoGrid.jsx
+│   │   │   └── CatalogoFilters.jsx
+│   │   └── ui/
+│   │       ├── Button.jsx
+│   │       └── FormField.jsx
+│   ├── pages/
+│   │   ├── HomePage.jsx
+│   │   ├── GremioPage.jsx
+│   │   ├── ProductoDetallePage.jsx
+│   │   ├── LoginPage.jsx
+│   │   ├── RegistroPage.jsx
+│   │   ├── NosotrosPage.jsx
+│   │   ├── BlogsPage.jsx
+│   │   ├── ContactoPage.jsx
+│   │   └── admin/
+│   │       ├── AdminLayout.jsx
+│   │       ├── AdminHomePage.jsx
+│   │       ├── ProductosAdminPage.jsx
+│   │       ├── UsuariosAdminPage.jsx
+│   │       ├── OrdenesAdminPage.jsx
+│   │       └── NuevoProductoPage.jsx
+│   └── tests/
+│       ├── setup.js
+│       ├── ProductCard.test.jsx
+│       ├── Button.test.jsx
+│       ├── CartContext.test.jsx
+│       ├── Navbar.test.jsx
+│       └── LoginPage.test.jsx
+├── karma.conf.js
+├── webpack.test.config.js
+├── .babelrc
+└── package.json
+```
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
