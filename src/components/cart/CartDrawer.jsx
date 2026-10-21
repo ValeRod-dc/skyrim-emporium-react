@@ -1,7 +1,9 @@
 import { useCart } from "../../context/CartContext";
+import { useNavigate } from "react-router";
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { cart, remove, changeQty, clear, total } = useCart();
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
@@ -41,7 +43,7 @@ export default function CartDrawer({ isOpen, onClose }) {
           <span className="text-warning">{total()} Oro</span>
         </div>
         
-        <button className="btn btn-warning w-100 mb-2 fw-bold" disabled={cart.length === 0}>Cerrar Trato</button>
+        <button className="btn btn-warning w-100 mb-2 fw-bold" disabled={cart.length === 0} onClick={() => { onClose();navigate("/carrito");}}>Ver Carrito</button>
         <button className="btn btn-outline-secondary w-100" onClick={clear}>Vaciar bolsa</button>
       </div>
     </>

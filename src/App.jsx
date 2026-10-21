@@ -2,6 +2,9 @@ import { Routes, Route, Navigate } from "react-router";
 import Layout from "./components/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import GremioPage from "./pages/GremioPage.jsx";
+import CarritoPage from "./pages/CarritoPage.jsx";
+import CheckoutPage from "./pages/CheckoutPage.jsx";
+import PagoErrorPage from "./pages/PagoErrorPage.jsx";
 /*import ProductoDetallePage from "./pages/ProductoDetallePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import RegistroPage from "./pages/RegistroPage.jsx";
@@ -21,6 +24,9 @@ function App() {
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/gremios/:slug" element={<GremioPage />} />
+        <Route path="/carrito" element={<CarritoPage />} />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/pago-error" element={<PagoErrorPage />} />
         {/* <Route path="/producto/:id" element={<ProductoDetallePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegistroPage />} />
