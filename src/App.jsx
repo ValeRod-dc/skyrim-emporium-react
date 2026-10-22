@@ -6,11 +6,11 @@ import CarritoPage from "./pages/CarritoPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 import PagoErrorPage from "./pages/PagoErrorPage.jsx";
 /*import LoginPage from "./pages/LoginPage.jsx";
-import RegistroPage from "./pages/RegistroPage.jsx";
+import RegistroPage from "./pages/RegistroPage.jsx";*/
 import NosotrosPage from "./pages/NosotrosPage.jsx";
 import BlogsPage from "./pages/BlogsPage.jsx";
 import ContactoPage from "./pages/ContactoPage.jsx";
-import AdminLayout from "./pages/admin/AdminLayout.jsx";
+/*import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import AdminHomePage from "./pages/admin/AdminHomePage.jsx";
 import ProductosAdminPage from "./pages/admin/ProductosAdminPage.jsx";
 import UsuariosAdminPage from "./pages/admin/UsuariosAdminPage.jsx";
@@ -26,11 +26,12 @@ function App() {
         <Route path="/carrito" element={<CarritoPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/pago-error" element={<PagoErrorPage />} />
-        {/*<Route path="/login" element={<LoginPage />} />
-        <Route path="/registro" element={<RegistroPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />
         <Route path="/blogs" element={<BlogsPage />} />
-        <Route path="/contacto" element={<ContactoPage />} />*/}
+        <Route path="/contacto" element={<ContactoPage />} />
+        {/*<Route path="/login" element={<LoginPage />} />
+        <Route path="/registro" element={<RegistroPage />} />
+        */}
       </Route>
 
       {/*<Route path="/admin" element={<AdminLayout />}>
