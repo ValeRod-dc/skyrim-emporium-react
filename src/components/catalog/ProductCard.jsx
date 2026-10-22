@@ -2,6 +2,7 @@ import { useCart } from "../../context/CartContext";
 import { Link } from "react-router";
 import { imagenCatalogo } from "../../utils/imagenes";
 import { configuracionGremios } from "../../data/gremios";
+import { esOferta, obtenerPrecioConDescuento } from "../../utils/ofertas";
 
 const clasesCategoria = {
   herreria: "cat-herreria",
@@ -22,6 +23,10 @@ export default function ProductCard({ producto, onVerDetalle }) {
 
   const claseBadge = clasesCategoria[producto.gremio] || "bg-secondary";
 
+  //Parte de las ofertas
+  const tieneOferta = esOferta(producto);
+  const precioFinal = obtenerPrecioConDescuento(producto);
+
   const handleDetalleClick = (e) => {
     e.stopPropagation();
     if (onVerDetalle) onVerDetalle();
@@ -29,7 +34,8 @@ export default function ProductCard({ producto, onVerDetalle }) {
 
   const handleAddClick = (e) => {
     e.stopPropagation();
-    add(producto);
+    //Precio con dscto
+    add({...producto, price: precioFinal});
   };
 
   return (
@@ -51,7 +57,16 @@ export default function ProductCard({ producto, onVerDetalle }) {
         
         <h5 className="card-title text-warning font-cinzel">{producto.name}</h5>
         <p className="card-text small flex-grow-1">{producto.description}</p>
-        <p className="fw-bold mb-3">$ {producto.price} Oro</p>
+
+        {/* aki se muestra tachado */}
+        <div className="d-flex align-items-center gap-2 mb-3">
+          {tieneOferta && (
+            <span className="text-secundario text-decoration-line-through small">
+              ${producto.price}
+            </span>
+          )}
+          <p className="producto-precio m-0">$ {precioFinal} Oro</p>
+        </div>
         
         <div className="d-flex gap-2 mt-auto">
           {onVerDetalle ? (

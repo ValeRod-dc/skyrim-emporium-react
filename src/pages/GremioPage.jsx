@@ -5,6 +5,7 @@ import { configuracionGremios } from "../data/gremios";
 import ProductCard from "../components/catalog/ProductCard";
 import ProductModal from "../components/catalog/ProductModal";
 import { esProductoLegendario } from "../utils/imagenes";
+import { esOferta } from "../utils/ofertas";
 
 export default function GremioPage() {
   const { slug } = useParams();
@@ -26,7 +27,8 @@ export default function GremioPage() {
     );
 
     return todos.filter((producto) => {
-      const cumpleFiltro = filtro === "Todas" 
+      const cumpleFiltro = filtro === "Todas"
+        || (filtro === "Ofertas" && esOferta(producto))
         || (filtro === "Legendarias" && esProductoLegendario(producto, config))
         || (filtro === producto.categoriaSeccion);
 
@@ -67,6 +69,8 @@ export default function GremioPage() {
         <div className="d-flex flex-wrap gap-2">
           <button className={`btn btn-sm ${filtro === "Todas" ? "btn-warning text-dark" : "btn-outline-warning"}`} onClick={() => setFiltro("Todas")}>Todos</button>
           
+          <button className={`btn btn-sm ${filtro === "Ofertas" ? "btn-warning text-dark" : "btn-outline-warning"}`} onClick={() => setFiltro("Ofertas")}>Ofertas</button>
+
           {config.categoria === "herreria" && (
             <button className={`btn btn-sm ${filtro === "Legendarias" ? "btn-warning text-dark" : "btn-outline-warning"}`} onClick={() => setFiltro("Legendarias")}>Legendarias</button>
           )}
@@ -95,7 +99,7 @@ export default function GremioPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center text-muted py-5 border border-secondary rounded bg-dark">
+        <div className="text-center text-secundario py-5 border border-secondary rounded bg-dark">
           <h3>No se encontraron productos.</h3>
         </div>
       )}

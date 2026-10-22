@@ -18,7 +18,7 @@ export default function HomePage() {
               Has llegado al lugar indicado si buscas buen equipo para continuar tu viaje por Skyrim. 
               Aquí podrás encontrar armas, armaduras, pociones y otros artículos útiles para cualquier aventurero que se atreva a recorrer las tierras del norte.
             </p>
-            <a href="#catalogo" className="btn-hero">Ver Catálogo</a>
+            <a href="#catalogo" className="btn-hero">Ver Ofertas</a>
           </div>
         </div>
       </section>
@@ -29,7 +29,7 @@ export default function HomePage() {
           <hr className="border-warning mx-auto" style={{ width: "80px", borderWidth: "2px" }} />
         </div>
         
-        <h4 className="text-warning mb-4">Productos destacados</h4>
+        <h4 className="text-warning mb-4">Ofertas destacados</h4>
         <div className="row g-4">
           {productosDestacados.map((producto) => (
             <div key={producto.id} className="col-12 col-sm-6 col-md-3">

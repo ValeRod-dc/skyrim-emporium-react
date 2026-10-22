@@ -1,5 +1,6 @@
 import { useCart } from "../../context/CartContext.jsx";
 import { imagenCatalogo, esProductoLegendario } from "../../utils/imagenes";
+import { esOferta, obtenerPrecioConDescuento } from "../../utils/ofertas.js";
 
 export default function ProductModal({ producto, config, onClose }) {
   const { add } = useCart();
@@ -7,6 +8,8 @@ export default function ProductModal({ producto, config, onClose }) {
 
   const esLegendario = esProductoLegendario(producto, config);
   const stock = Number(producto.stock ?? 0);
+  const tieneOferta = esOferta(producto);
+  const precioFinal = obtenerPrecioConDescuento(producto);
 
   return (
     <div className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
@@ -24,13 +27,15 @@ export default function ProductModal({ producto, config, onClose }) {
         <div className="p-4 d-flex flex-column" style={{ flex: 1.2 }}>
           <button className="btn-close btn-close-white ms-auto" onClick={onClose}></button>
           
-          <p className="text-muted small mb-1">{config.titulo}</p>
+          <p className="text-secundario small mb-1">{config.titulo}</p>
           <h2 className={`font-cinzel mb-3 ${esLegendario ? 'text-warning' : 'text-white'}`}>{producto.name}</h2>
           <p className="text-light">{producto.description || "Sin descripción disponible."}</p>
-          <p className="text-muted">Stock: {stock}</p>
+          <p className="text-secundario">Stock: {stock}</p>
           
           <div className="mt-auto pt-3">
-            <p className="fs-4 text-warning fw-bold mb-3">$ {Number(producto.price).toLocaleString("es-CL")} Oro</p>
+            <p className="fs-4 text-warning fw-bold mb-3">
+              {tieneOferta && <span className="text-secundario text-decoration-line-through fs-6 me-2">${producto.price}</span>}
+              $ {precioFinal} Oro</p>
             <button 
               className="btn btn-warning fw-bold w-100 py-2" 
               disabled={stock <= 0}

@@ -82,6 +82,10 @@ p.subtitulo {
   margin-bottom: var(--space-4);
 }
 
+.text-secundario {
+  color: var(--color-parchment-dim) !important;
+}
+
 
 /* =========================================================
    02. NAVBAR Y NAVEGACIÓN

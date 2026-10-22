@@ -5,8 +5,7 @@ import GremioPage from "./pages/GremioPage.jsx";
 import CarritoPage from "./pages/CarritoPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 import PagoErrorPage from "./pages/PagoErrorPage.jsx";
-/*import ProductoDetallePage from "./pages/ProductoDetallePage.jsx";
-import LoginPage from "./pages/LoginPage.jsx";
+/*import LoginPage from "./pages/LoginPage.jsx";
 import RegistroPage from "./pages/RegistroPage.jsx";
 import NosotrosPage from "./pages/NosotrosPage.jsx";
 import BlogsPage from "./pages/BlogsPage.jsx";
@@ -27,8 +26,7 @@ function App() {
         <Route path="/carrito" element={<CarritoPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/pago-error" element={<PagoErrorPage />} />
-        {/* <Route path="/producto/:id" element={<ProductoDetallePage />} />
-        <Route path="/login" element={<LoginPage />} />
+        {/*<Route path="/login" element={<LoginPage />} />
         <Route path="/registro" element={<RegistroPage />} />
         <Route path="/nosotros" element={<NosotrosPage />} />
         <Route path="/blogs" element={<BlogsPage />} />

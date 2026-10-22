@@ -18,7 +18,7 @@ export default function CartDrawer({ isOpen, onClose }) {
         </div>
         
         {cart.length === 0 ? (
-          <p className="text-muted fst-italic text-center my-4">Tu bolsa está vacía, viajero.</p>
+          <p className="text-secundario fst-italic text-center my-4">Tu bolsa está vacía, viajero.</p>
         ) : (
           <div className="d-flex flex-column gap-3">
             {cart.map((item) => (
