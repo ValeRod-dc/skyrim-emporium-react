@@ -419,12 +419,7 @@ p.subtitulo {
   flex-direction: column;
   transition: border-color var(--transition-fast), transform var(--transition-fast);
 }
-.tarjeta-producto:has(.cat-herreria) { border-top: 3px solid var(--cat-herreria); }
-.tarjeta-producto:has(.cat-alquimia) { border-top: 3px solid var(--cat-alquimia); }
-.tarjeta-producto:has(.cat-general)  { border-top: 3px solid var(--cat-general); }
-.tarjeta-producto:has(.cat-ropa)     { border-top: 3px solid var(--cat-ropa); }
-.tarjeta-producto:has(.cat-comida)   { border-top: 3px solid var(--cat-comida); }
-.tarjeta-producto:has(.cat-magia)    { border-top: 3px solid var(--cat-magia); }
+
 .tarjeta-producto:hover {
   border-color: var(--color-iron-light);
   transform: translateY(-3px);

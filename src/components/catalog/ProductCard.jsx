@@ -33,7 +33,7 @@ export default function ProductCard({ producto, onVerDetalle }) {
   };
 
   return (
-    <div className="card h-100 bg-dark text-light border-secondary shadow-sm">
+    <div className="card h-100 text-light">
       <div className="d-flex align-items-center justify-content-center p-3" style={{ height: "180px", backgroundColor: "#0a0a0a" }}>
         <img
           src={imagenCatalogo(producto.image)}
@@ -50,7 +50,7 @@ export default function ProductCard({ producto, onVerDetalle }) {
         </span>
         
         <h5 className="card-title text-warning font-cinzel">{producto.name}</h5>
-        <p className="card-text small text-muted flex-grow-1">{producto.description}</p>
+        <p className="card-text small flex-grow-1">{producto.description}</p>
         <p className="fw-bold mb-3">$ {producto.price} Oro</p>
         
         <div className="d-flex gap-2 mt-auto">
