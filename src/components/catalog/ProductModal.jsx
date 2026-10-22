@@ -1,4 +1,4 @@
-import { useCart } from "../../context/CartContext";
+import { useCart } from "../../context/CartContext.jsx";
 import { imagenCatalogo, esProductoLegendario } from "../../utils/imagenes";
 
 export default function ProductModal({ producto, config, onClose }) {
@@ -17,12 +17,10 @@ export default function ProductModal({ producto, config, onClose }) {
            style={{ maxWidth: "800px", width: "90%" }} 
            onClick={(e) => e.stopPropagation()}>
         
-        {/* Imagen */}
         <div className="d-flex align-items-center justify-content-center p-4" style={{ backgroundColor: "#0a0a0a", flex: 1, minHeight: "300px" }}>
           <img src={imagenCatalogo(producto.image)} alt={producto.name} className="img-fluid" style={{ maxHeight: "300px", objectFit: "contain" }} />
         </div>
 
-        {/* Contenido */}
         <div className="p-4 d-flex flex-column" style={{ flex: 1.2 }}>
           <button className="btn-close btn-close-white ms-auto" onClick={onClose}></button>
           
@@ -31,18 +29,15 @@ export default function ProductModal({ producto, config, onClose }) {
           <p className="text-light">{producto.description || "Sin descripción disponible."}</p>
           <p className="text-muted">Stock: {stock}</p>
           
-          <div className="mt-auto">
-            <p className="fs-4 text-warning fw-bold mb-3">{Number(producto.price).toLocaleString("es-CL")} Oro</p>
-            <div className="d-flex gap-2">
-              <button 
-                className="btn btn-warning fw-bold flex-grow-1" 
-                disabled={stock <= 0}
-                onClick={() => add(producto)}
-              >
-                {stock > 0 ? "Añadir al carrito" : "Sin stock"}
-              </button>
-              <a href={`/producto/${producto.id}`} className="btn btn-outline-warning">Ver detalle completo</a>
-            </div>
+          <div className="mt-auto pt-3">
+            <p className="fs-4 text-warning fw-bold mb-3">$ {Number(producto.price).toLocaleString("es-CL")} Oro</p>
+            <button 
+              className="btn btn-warning fw-bold w-100 py-2" 
+              disabled={stock <= 0}
+              onClick={() => add(producto)}
+            >
+              {stock > 0 ? "Añadir al carrito" : "Sin stock"}
+            </button>
           </div>
         </div>
       </div>

@@ -25,7 +25,7 @@ export default function CartDrawer({ isOpen, onClose }) {
               <div key={item.id} className="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2">
                 <div className="flex-grow-1">
                   <div className="fw-bold small">{item.name}</div>
-                  <div className="text-warning small">{item.price} Oro c/u</div>
+                  <div className="text-warning small">$ {item.price} Oro c/u</div>
                 </div>
                 <div className="d-flex align-items-center gap-2">
                   <button className="btn btn-sm btn-outline-light" onClick={() => changeQty(item.id, -1)}>-</button>
@@ -40,7 +40,7 @@ export default function CartDrawer({ isOpen, onClose }) {
 
         <div className="d-flex justify-content-between mt-4 mb-3 fw-bold fs-5 border-top border-secondary pt-3">
           <span>Total:</span>
-          <span className="text-warning">{total()} Oro</span>
+          <span className="text-warning">$ {total()} Oro</span>
         </div>
         
         <button className="btn btn-warning w-100 mb-2 fw-bold" disabled={cart.length === 0} onClick={() => { onClose();navigate("/carrito");}}>Ver Carrito</button>

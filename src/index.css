@@ -88,7 +88,6 @@ p.subtitulo {
    ========================================================= */
 
 .navbar {
-  background-color: var(--color-void);
   padding: 0 20px;
 }
 .navbar .container {
@@ -1201,6 +1200,12 @@ body.pagina-contacto {
     font-family: var(--font-heading);
     margin-top: 15px;
     min-height: 24px;
+}
+
+/* Arreglo para que el texto de los placeholders se vea en fondos oscuros */
+.form-control.bg-black::placeholder,
+.form-control.bg-dark::placeholder {
+  color: rgba(232, 223, 201, 0.5) !important;
 }
 
 /* Información de contacto */

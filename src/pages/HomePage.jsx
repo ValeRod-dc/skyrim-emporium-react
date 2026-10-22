@@ -4,7 +4,8 @@ import { gremios } from "../data/gremios.js";
 import ProductCard from "../components/catalog/ProductCard.jsx";
 
 export default function HomePage() {
-  const productosDestacados = obtenerTodosLosProductos().slice(0, 4);
+  const idsDestacados = ["armadura-acero", "pocion-salud", "baston-destruccion", "rollo-dulce"];
+  const productosDestacados = obtenerTodosLosProductos().filter(p => idsDestacados.includes(p.id));
 
   return (
     <div className="home-page">
