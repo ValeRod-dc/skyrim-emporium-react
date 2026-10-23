@@ -1,8 +1,10 @@
+import { Link, useNavigate } from "react-router";
 import { useCart } from "../../context/CartContext";
-import { useNavigate } from "react-router";
+import { useAuth } from "../../context/AuthContext";
 
 export default function CartDrawer({ isOpen, onClose }) {
   const { cart, remove, changeQty, clear, total } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   if (!isOpen) return null;
@@ -22,16 +24,16 @@ export default function CartDrawer({ isOpen, onClose }) {
         ) : (
           <div className="d-flex flex-column gap-3">
             {cart.map((item) => (
-              <div key={item.id} className="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2">
+              <div key={`${item.gremio || "sin-gremio"}-${item.id}`} className="d-flex justify-content-between align-items-center border-bottom border-secondary pb-2">
                 <div className="flex-grow-1">
                   <div className="fw-bold small">{item.name}</div>
                   <div className="text-warning small">$ {item.price} Oro c/u</div>
                 </div>
                 <div className="d-flex align-items-center gap-2">
-                  <button className="btn btn-sm btn-outline-light" onClick={() => changeQty(item.id, -1)}>-</button>
+                  <button className="btn btn-sm btn-outline-light" onClick={() => changeQty(item.id, -1, item.gremio)}>-</button>
                   <span>{item.qty}</span>
-                  <button className="btn btn-sm btn-outline-light" onClick={() => changeQty(item.id, 1)}>+</button>
-                  <button className="btn btn-sm btn-danger ms-1" onClick={() => remove(item.id)}>×</button>
+                  <button className="btn btn-sm btn-outline-light" onClick={() => changeQty(item.id, 1, item.gremio)}>+</button>
+                  <button className="btn btn-sm btn-danger ms-1" onClick={() => remove(item.id, item.gremio)}>×</button>
                 </div>
               </div>
             ))}
@@ -43,6 +45,11 @@ export default function CartDrawer({ isOpen, onClose }) {
           <span className="text-warning">$ {total()} Oro</span>
         </div>
         
+        {!user && cart.length > 0 && (
+          <Link className="btn btn-warning w-100 mb-2 fw-bold" to="/login">
+            Inicia sesión para comprar
+          </Link>
+        )}
         <button className="btn btn-warning w-100 mb-2 fw-bold" disabled={cart.length === 0} onClick={() => { onClose();navigate("/carrito");}}>Ver Carrito</button>
         <button className="btn btn-outline-secondary w-100" onClick={clear}>Vaciar bolsa</button>
       </div>

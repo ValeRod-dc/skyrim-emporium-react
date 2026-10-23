@@ -707,6 +707,201 @@ export const inventario = {
 export const CLAVE_PRODUCTOS_ADMIN = "skyrimProductosAdmin";
 export const CLAVE_STOCK_PRODUCTOS = "skyrimStockProductos";
 export const CLAVE_PRODUCTOS_EDITADOS = "skyrimProductosEditados";
+export const CLAVE_CATEGORIAS_ADMIN = "skyrimCategoriasAdmin";
+export const CLAVE_PRODUCTOS_ELIMINADOS = "skyrimProductosEliminados";
+
+const slugCategoria = (titulo) => String(titulo)
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+const idCategoriaInicial = (gremio, titulo) => `category-${gremio}-${slugCategoria(titulo)}`;
+const CATEGORIAS_INICIALES = Object.entries(inventario).flatMap(([gremio, secciones]) =>
+  secciones.map((seccion) => ({
+    id: idCategoriaInicial(gremio, seccion.titulo),
+    gremio,
+    titulo: seccion.titulo,
+  }))
+);
+
+function obtenerClaveProducto(producto, gremio) {
+  const duplicados = obtenerTodosLosProductos().filter((item) => item.id === producto.id);
+  if (duplicados.length <= 1) return producto.id;
+  const guild = gremio || Object.entries(inventario).find(([, secciones]) =>
+    secciones.some((seccion) => seccion.items.includes(producto))
+  )?.[0];
+  return `${guild}::${producto.id}`;
+}
+
+function encontrarSeccion(gremio, categoria) {
+  return inventario[gremio]?.find((seccion) =>
+    seccion.categoryId === categoria || seccion.titulo === categoria
+  );
+}
+
+function leerColeccionLocal(clave, predeterminado) {
+  const valor = localStorage.getItem(clave);
+  if (!valor) return predeterminado;
+  const resultado = JSON.parse(valor);
+  if (!Array.isArray(resultado) && (resultado === null || typeof resultado !== "object")) {
+    throw new Error(`Los datos guardados en ${clave} no tienen un formato válido.`);
+  }
+  return resultado;
+}
+
+function persistirProducto(producto, gremioOriginal = producto.gremio) {
+  const productosAdmin = leerColeccionLocal(CLAVE_PRODUCTOS_ADMIN, []);
+  const indiceAdmin = productosAdmin.findIndex((item) => item.id === producto.id && item.gremio === gremioOriginal);
+  if (indiceAdmin >= 0) {
+    productosAdmin[indiceAdmin] = { ...productosAdmin[indiceAdmin], ...producto };
+    localStorage.setItem(CLAVE_PRODUCTOS_ADMIN, JSON.stringify(productosAdmin));
+    return;
+  }
+
+  const editados = leerColeccionLocal(CLAVE_PRODUCTOS_EDITADOS, {});
+  const clave = obtenerClaveProducto(producto, gremioOriginal);
+  editados[clave] = { ...editados[clave], ...producto };
+  localStorage.setItem(CLAVE_PRODUCTOS_EDITADOS, JSON.stringify(editados));
+}
+
+function persistirConfiguracionCategorias() {
+  const idsOriginales = new Set(CATEGORIAS_INICIALES.map((categoria) => categoria.id));
+  const seccionesActuales = Object.entries(inventario).flatMap(([gremio, secciones]) =>
+    secciones.map((seccion) => ({ ...seccion, gremio }))
+  );
+  const idsActuales = new Set(seccionesActuales.map((seccion) => seccion.categoryId));
+  const configuracion = {
+    renombradas: seccionesActuales
+      .filter((seccion) => idsOriginales.has(seccion.categoryId))
+      .filter((seccion) => {
+        const inicial = CATEGORIAS_INICIALES.find((categoria) => categoria.id === seccion.categoryId);
+        return inicial && inicial.titulo !== seccion.titulo;
+      })
+      .map(({ categoryId, gremio, titulo }) => ({ id: categoryId, gremio, titulo })),
+    ocultas: CATEGORIAS_INICIALES
+      .filter((categoria) => !idsActuales.has(categoria.id))
+      .map((categoria) => categoria.id),
+    personalizadas: seccionesActuales
+      .filter((seccion) => !idsOriginales.has(seccion.categoryId))
+      .map(({ categoryId, gremio, titulo }) => ({ id: categoryId, gremio, titulo })),
+  };
+  localStorage.setItem(CLAVE_CATEGORIAS_ADMIN, JSON.stringify(configuracion));
+}
+
+export function cargarCategoriasAdmin() {
+  Object.entries(inventario).forEach(([gremio, secciones]) => {
+    secciones.forEach((seccion) => {
+      seccion.categoryId ||= idCategoriaInicial(gremio, seccion.titulo);
+    });
+  });
+
+  let configuracion;
+  try {
+    configuracion = JSON.parse(localStorage.getItem(CLAVE_CATEGORIAS_ADMIN) || "{}");
+  } catch (error) {
+    console.error("No se pudieron cargar las categorías guardadas.", error);
+    localStorage.removeItem(CLAVE_CATEGORIAS_ADMIN);
+    return;
+  }
+
+  const ocultas = new Set(Array.isArray(configuracion.ocultas) ? configuracion.ocultas : []);
+  const renombradas = Array.isArray(configuracion.renombradas) ? configuracion.renombradas : [];
+  const personalizadas = Array.isArray(configuracion.personalizadas) ? configuracion.personalizadas : [];
+
+  Object.entries(inventario).forEach(([gremio, secciones]) => {
+    inventario[gremio] = secciones.filter((seccion) => !ocultas.has(seccion.categoryId));
+  });
+  renombradas.forEach(({ id, gremio, titulo }) => {
+    const seccion = inventario[gremio]?.find((item) => item.categoryId === id);
+    if (seccion && typeof titulo === "string") seccion.titulo = titulo;
+  });
+  personalizadas.forEach(({ id, gremio, titulo }) => {
+    if (!inventario[gremio] || typeof titulo !== "string" || !titulo.trim()) return;
+    if (inventario[gremio].some((seccion) => seccion.categoryId === id)) return;
+    inventario[gremio].push({ categoryId: id, titulo, items: [] });
+  });
+}
+
+export function obtenerCategoriasAdmin() {
+  return Object.entries(inventario).flatMap(([gremio, secciones]) =>
+    secciones.map((seccion) => ({
+      id: seccion.categoryId || idCategoriaInicial(gremio, seccion.titulo),
+      gremio,
+      titulo: seccion.titulo,
+      productos: seccion.items.length,
+    }))
+  );
+}
+
+export function guardarCategoriaAdmin(gremio, titulo) {
+  const nombre = titulo.trim();
+  if (!inventario[gremio] || !nombre ||
+      inventario[gremio].some((seccion) => seccion.titulo.toLowerCase() === nombre.toLowerCase())) {
+    return false;
+  }
+
+  inventario[gremio].push({
+    categoryId: `custom-${gremio}-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+    titulo: nombre,
+    items: [],
+  });
+  try {
+    persistirConfiguracionCategorias();
+  } catch (error) {
+    inventario[gremio].pop();
+    console.error("No se pudo guardar la nueva categoría.", error);
+    return false;
+  }
+  return true;
+}
+
+export function actualizarCategoriaAdmin(id, titulo) {
+  const nombre = titulo.trim();
+  const ubicacion = Object.entries(inventario).find(([, secciones]) =>
+    secciones.some((seccion) => seccion.categoryId === id)
+  );
+  if (!ubicacion || !nombre) return false;
+  const [gremio, secciones] = ubicacion;
+  const seccion = secciones.find((item) => item.categoryId === id);
+  if (secciones.some((item) =>
+    item.categoryId !== id && item.titulo.toLowerCase() === nombre.toLowerCase()
+  )) return false;
+
+  const nombreAnterior = seccion.titulo;
+  seccion.titulo = nombre;
+  try {
+    seccion.items.forEach((producto) => {
+      producto.categoria = nombre;
+      persistirProducto({ ...producto, gremio });
+    });
+    persistirConfiguracionCategorias();
+  } catch (error) {
+    seccion.titulo = nombreAnterior;
+    seccion.items.forEach((producto) => { producto.categoria = nombreAnterior; });
+    console.error("No se pudo guardar el cambio de categoría.", error);
+    return false;
+  }
+  return true;
+}
+
+export function eliminarCategoriaAdmin(id) {
+  const ubicacion = Object.entries(inventario).find(([, secciones]) =>
+    secciones.some((seccion) => seccion.categoryId === id)
+  );
+  if (!ubicacion) return false;
+  const [gremio, secciones] = ubicacion;
+  const seccion = secciones.find((item) => item.categoryId === id);
+  if (seccion.items.length) return false;
+
+  inventario[gremio] = secciones.filter((item) => item.categoryId !== id);
+  try {
+    persistirConfiguracionCategorias();
+  } catch (error) {
+    inventario[gremio] = secciones;
+    console.error("No se pudo eliminar la categoría.", error);
+    return false;
+  }
+  return true;
+}
 
 export const STOCK_POR_GREMIO = {
   alquimia: 20,
@@ -736,19 +931,23 @@ function asignarStockInicial() {
   });
 }
 
-export function obtenerProductoInventario(id) {
-  return Object.values(inventario).flatMap(secciones => secciones.flatMap(seccion => seccion.items))
-    .find(producto => producto.id === id);
+export function obtenerProductoInventario(id, gremio) {
+  return Object.entries(inventario)
+    .filter(([guild]) => !gremio || guild === gremio)
+    .flatMap(([, secciones]) => secciones.flatMap((seccion) => seccion.items))
+    .find((producto) => producto.id === id);
 }
 
 export function cargarStockGuardado() {
   try {
     const stocks = JSON.parse(localStorage.getItem(CLAVE_STOCK_PRODUCTOS) || "{}");
-    Object.entries(stocks).forEach(([id, stock]) => {
-      const producto = obtenerProductoInventario(id);
+    Object.entries(stocks).forEach(([clave, stock]) => {
+      const [gremio, id] = clave.includes("::") ? clave.split("::", 2) : ["", clave];
+      const producto = obtenerProductoInventario(id, gremio || undefined);
       if (producto) producto.stock = Number(stock);
     });
   } catch (error) {
+    console.error("No se pudo recuperar el stock guardado.", error);
     localStorage.removeItem(CLAVE_STOCK_PRODUCTOS);
   }
 }
@@ -756,48 +955,72 @@ export function cargarStockGuardado() {
 export function cargarProductosEditados() {
   try {
     const editados = JSON.parse(localStorage.getItem(CLAVE_PRODUCTOS_EDITADOS) || "{}");
-    Object.entries(editados).forEach(([id, cambios]) => {
-      const producto = obtenerProductoInventario(id);
-      if (producto) Object.assign(producto, cambios);
+    Object.entries(editados).forEach(([clave, cambios]) => {
+      const [gremio, id] = clave.includes("::") ? clave.split("::", 2) : ["", clave];
+      const ubicacion = Object.entries(inventario).find(([guild, secciones]) =>
+        secciones.some((seccion) => seccion.items.some((item) =>
+          item.id === id && (!gremio || guild === gremio)
+        ))
+      );
+      if (!ubicacion) return;
+
+      const [gremioActual, secciones] = ubicacion;
+      const origen = secciones.find((seccion) => seccion.items.some((item) => item.id === id));
+      const producto = origen.items.find((item) => item.id === id);
+      Object.assign(producto, cambios);
+      const destino = encontrarSeccion(producto.gremio || gremioActual, producto.categoria);
+      if (destino && destino !== origen) {
+        origen.items = origen.items.filter((item) => item !== producto);
+        destino.items.push(producto);
+      }
     });
   } catch (error) {
+    console.error("No se pudieron recuperar los productos editados.", error);
     localStorage.removeItem(CLAVE_PRODUCTOS_EDITADOS);
   }
 }
 
-export function actualizarProductoAdmin(productoActualizado) {
-  const producto = obtenerProductoInventario(productoActualizado.id);
-  if (!producto) return false;
-  Object.assign(producto, productoActualizado);
+export function actualizarProductoAdmin(productoActualizado, gremioOriginal = productoActualizado.gremio) {
+  const producto = obtenerProductoInventario(productoActualizado.id, gremioOriginal);
+  const destino = encontrarSeccion(productoActualizado.gremio, productoActualizado.categoria);
+  if (!producto || !destino) return false;
 
-  const productosAdmin = JSON.parse(localStorage.getItem(CLAVE_PRODUCTOS_ADMIN) || "[]");
-  const indiceAdmin = productosAdmin.findIndex(item => item.id === producto.id);
-  if (indiceAdmin >= 0) {
-    productosAdmin[indiceAdmin] = { ...productosAdmin[indiceAdmin], ...productoActualizado };
-    localStorage.setItem(CLAVE_PRODUCTOS_ADMIN, JSON.stringify(productosAdmin));
-  } else {
-    const editados = JSON.parse(localStorage.getItem(CLAVE_PRODUCTOS_EDITADOS) || "{}");
-    editados[producto.id] = { ...editados[producto.id], ...productoActualizado };
-    localStorage.setItem(CLAVE_PRODUCTOS_EDITADOS, JSON.stringify(editados));
+  const cambios = { ...producto, ...productoActualizado };
+  try {
+    persistirProducto(cambios, gremioOriginal);
+  } catch (error) {
+    console.error("No se pudo guardar el producto actualizado.", error);
+    return false;
   }
+
+  const origen = inventario[gremioOriginal].find((seccion) => seccion.items.includes(producto));
+  origen.items = origen.items.filter((item) => item !== producto);
+  Object.assign(producto, cambios);
+  if (!destino.items.includes(producto)) destino.items.push(producto);
   return true;
 }
 
-export function actualizarStockProducto(id, cantidad) {
-  const producto = obtenerProductoInventario(id);
+export function actualizarStockProducto(id, cantidad, gremio) {
+  const producto = obtenerProductoInventario(id, gremio);
   if (!producto || Number(producto.stock) < cantidad) return false;
 
-  producto.stock -= cantidad;
-  const stocks = JSON.parse(localStorage.getItem(CLAVE_STOCK_PRODUCTOS) || "{}");
-  stocks[id] = producto.stock;
-  localStorage.setItem(CLAVE_STOCK_PRODUCTOS, JSON.stringify(stocks));
+  const nuevoStock = producto.stock - cantidad;
+  try {
+    const stocks = leerColeccionLocal(CLAVE_STOCK_PRODUCTOS, {});
+    stocks[obtenerClaveProducto(producto, gremio)] = nuevoStock;
+    localStorage.setItem(CLAVE_STOCK_PRODUCTOS, JSON.stringify(stocks));
 
-  const productosAdmin = JSON.parse(localStorage.getItem(CLAVE_PRODUCTOS_ADMIN) || "[]");
-  const productoAdmin = productosAdmin.find(item => item.id === id);
-  if (productoAdmin) {
-    productoAdmin.stock = producto.stock;
-    localStorage.setItem(CLAVE_PRODUCTOS_ADMIN, JSON.stringify(productosAdmin));
+    const productosAdmin = leerColeccionLocal(CLAVE_PRODUCTOS_ADMIN, []);
+    const productoAdmin = productosAdmin.find((item) => item.id === id && item.gremio === producto.gremio);
+    if (productoAdmin) {
+      productoAdmin.stock = nuevoStock;
+      localStorage.setItem(CLAVE_PRODUCTOS_ADMIN, JSON.stringify(productosAdmin));
+    }
+  } catch (error) {
+    console.error("No se pudo guardar el cambio de stock.", error);
+    return false;
   }
+  producto.stock = nuevoStock;
   return true;
 }
 
@@ -810,7 +1033,11 @@ export function cargarProductosAdmin() {
       if (!gremio) return;
       let seccion = gremio.find(item => item.titulo === producto.categoria);
       if (!seccion) {
-        seccion = { titulo: producto.categoria, items: [] };
+        seccion = {
+          categoryId: `legacy-${producto.gremio}-${slugCategoria(producto.categoria)}`,
+          titulo: producto.categoria,
+          items: [],
+        };
         gremio.push(seccion);
       }
       if (!seccion.items.some(item => item.id === producto.id)) {
@@ -818,16 +1045,84 @@ export function cargarProductosAdmin() {
       }
     });
   } catch (error) {
+    console.error("No se pudieron cargar los productos personalizados.", error);
     localStorage.removeItem(CLAVE_PRODUCTOS_ADMIN);
   }
 }
 
+export function cargarProductosEliminados() {
+  try {
+    const eliminados = JSON.parse(localStorage.getItem(CLAVE_PRODUCTOS_ELIMINADOS) || "[]");
+    if (!Array.isArray(eliminados)) throw new Error("El registro de productos eliminados no tiene formato válido.");
+    Object.entries(inventario).forEach(([gremio, secciones]) => {
+      secciones.forEach((seccion) => {
+        seccion.items = seccion.items.filter((producto) => {
+          const clave = obtenerClaveProducto(producto, gremio);
+          return !eliminados.includes(clave) && !(clave !== producto.id && eliminados.includes(producto.id));
+        });
+      });
+    });
+  } catch (error) {
+    console.error("No se pudo cargar el registro de productos eliminados.", error);
+    localStorage.removeItem(CLAVE_PRODUCTOS_ELIMINADOS);
+  }
+}
+
 export function guardarProductoAdmin(producto) {
-  const productos = JSON.parse(localStorage.getItem(CLAVE_PRODUCTOS_ADMIN) || "[]");
-  productos.push(producto);
-  localStorage.setItem(CLAVE_PRODUCTOS_ADMIN, JSON.stringify(productos));
-  const seccion = inventario[producto.gremio].find(item => item.titulo === producto.categoria);
-  if (seccion) seccion.items.push(producto);
+  const seccion = encontrarSeccion(producto.gremio, producto.categoria);
+  if (!seccion || obtenerTodosLosProductos().some((item) => item.id === producto.id)) return false;
+
+  try {
+    const productos = leerColeccionLocal(CLAVE_PRODUCTOS_ADMIN, []);
+    productos.push({ ...producto, categoria: seccion.titulo });
+    localStorage.setItem(CLAVE_PRODUCTOS_ADMIN, JSON.stringify(productos));
+  } catch (error) {
+    console.error("No se pudo guardar el producto nuevo.", error);
+    return false;
+  }
+
+  seccion.items.push({ ...producto, categoria: seccion.titulo });
+  return true;
+}
+
+export function eliminarProductoAdmin(id, gremio) {
+  const secciones = gremio
+    ? [[gremio, inventario[gremio] || []]]
+    : Object.entries(inventario);
+  const ubicacion = secciones.find(([guild, items]) =>
+    items.some((seccion) => seccion.items.some((producto) =>
+      producto.id === id && (!gremio || guild === gremio)
+    ))
+  );
+  if (!ubicacion) return false;
+  const [guild, grupos] = ubicacion;
+  const seccion = grupos.find((item) => item.items.some((producto) => producto.id === id));
+  const producto = seccion.items.find((item) => item.id === id);
+
+  try {
+    const productos = leerColeccionLocal(CLAVE_PRODUCTOS_ADMIN, [])
+      .filter((item) => item.id !== id || item.gremio !== guild);
+    const editados = leerColeccionLocal(CLAVE_PRODUCTOS_EDITADOS, {});
+    const clave = obtenerClaveProducto(producto, guild);
+    delete editados[clave];
+    if (clave !== id) delete editados[id];
+    const stocks = leerColeccionLocal(CLAVE_STOCK_PRODUCTOS, {});
+    delete stocks[clave];
+    if (clave !== id) delete stocks[id];
+    const eliminados = leerColeccionLocal(CLAVE_PRODUCTOS_ELIMINADOS, []);
+    if (!productos.some((item) => item.id === id && item.gremio === guild) &&
+        !eliminados.includes(clave)) eliminados.push(clave);
+    localStorage.setItem(CLAVE_PRODUCTOS_ADMIN, JSON.stringify(productos));
+    localStorage.setItem(CLAVE_PRODUCTOS_EDITADOS, JSON.stringify(editados));
+    localStorage.setItem(CLAVE_STOCK_PRODUCTOS, JSON.stringify(stocks));
+    localStorage.setItem(CLAVE_PRODUCTOS_ELIMINADOS, JSON.stringify(eliminados));
+  } catch (error) {
+    console.error("No se pudo eliminar el producto.", error);
+    return false;
+  }
+
+  seccion.items = seccion.items.filter((item) => item !== producto);
+  return true;
 }
 
 //nuevos para react
@@ -843,11 +1138,13 @@ export const obtenerTodosLosProductos = () => {
   );
 };
 
-export const buscarProductoPorId = (id) => {
-  return obtenerTodosLosProductos().find((p) => p.id === id);
+export const buscarProductoPorId = (id, gremio) => {
+  return obtenerTodosLosProductos().find((p) => p.id === id && (!gremio || p.gremio === gremio));
 };
 
+cargarCategoriasAdmin();
 asignarStockInicial();
 cargarProductosAdmin();
+cargarProductosEliminados();
 cargarStockGuardado();
 cargarProductosEditados();

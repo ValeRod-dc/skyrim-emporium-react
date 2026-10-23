@@ -20,27 +20,33 @@ export function CartProvider({ children }) {
       return;
     }
     setCart((prev) => {
-      const existente = prev.find((item) => item.id === producto.id);
+      const existente = prev.find((item) =>
+        item.id === producto.id && item.gremio === producto.gremio
+      );
       if (existente) {
         if (existente.qty >= producto.stock) {
           alert("No puedes agregar más unidades que el stock disponible.");
           return prev;
         }
         return prev.map((item) =>
-          item.id === producto.id ? { ...item, qty: item.qty + 1 } : item
+          item.id === producto.id && item.gremio === producto.gremio
+            ? { ...item, qty: item.qty + 1 }
+            : item
         );
       }
       return [...prev, { ...producto, qty: 1 }];
     });
   };
 
-  const remove = (id) => setCart((prev) => prev.filter((item) => item.id !== id));
+  const remove = (id, gremio) => setCart((prev) =>
+    prev.filter((item) => item.id !== id || (gremio && item.gremio !== gremio))
+  );
 
-  const changeQty = (id, delta) => {
+  const changeQty = (id, delta, gremio) => {
     setCart((prev) =>
       prev
         .map((item) => {
-          if (item.id === id) {
+          if (item.id === id && (!gremio || item.gremio === gremio)) {
             const newQty = item.qty + delta;
             if (newQty > item.stock) return item; // No superar stock
             return { ...item, qty: newQty };

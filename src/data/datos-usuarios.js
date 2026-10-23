@@ -34,11 +34,19 @@ export const usuarios = [
         correo: "vale.rodrigueza@duoc.cl",
         contrasena: "1234567",
         tipo: "Administrador"
+    },
+    {
+        run: "11111111-1",
+        nombre: "Vendedor",
+        apellidos: "Skyrim",
+        correo: "vendedor@duoc.cl",
+        contrasena: "123456",
+        tipo: "Vendedor"
     }
 ];
 
 const CLAVE_USUARIOS = "skyrimUsuarios";
-const usuariosGuardadosBase = usuarios.slice(0, 3);
+const CLAVE_USUARIOS_ELIMINADOS = "skyrimUsuariosEliminados";
 
 try {
     const usuariosGuardados = JSON.parse(localStorage.getItem(CLAVE_USUARIOS) || "[]");
@@ -49,29 +57,81 @@ try {
             else usuarios.push(usuarioGuardado);
         });
     }
+    const usuariosEliminados = JSON.parse(localStorage.getItem(CLAVE_USUARIOS_ELIMINADOS) || "[]");
+    if (Array.isArray(usuariosEliminados)) {
+        for (let index = usuarios.length - 1; index >= 0; index -= 1) {
+            if (usuariosEliminados.includes(usuarios[index].run.toUpperCase())) usuarios.splice(index, 1);
+        }
+    }
 } catch (error) {
+    console.error("No se pudieron cargar los usuarios guardados.", error);
     localStorage.removeItem(CLAVE_USUARIOS);
 }
 
-function guardarUsuario(usuario) {
-    const usuariosGuardados = usuarios.filter(item => !usuariosGuardadosBase.some(base => base.run === item.run));
-    usuariosGuardados.push(usuario);
-    localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuariosGuardados));
+export function guardarUsuario(usuario) {
+    if (usuarios.some(item =>
+        item.run.toUpperCase() === usuario.run.toUpperCase() ||
+        item.correo.toLowerCase() === usuario.correo.toLowerCase()
+    )) {
+        return false;
+    }
+
+    try {
+        localStorage.setItem(CLAVE_USUARIOS, JSON.stringify([...usuarios, usuario]));
+        const eliminados = JSON.parse(localStorage.getItem(CLAVE_USUARIOS_ELIMINADOS) || "[]")
+            .filter((run) => run !== usuario.run.toUpperCase());
+        localStorage.setItem(CLAVE_USUARIOS_ELIMINADOS, JSON.stringify(eliminados));
+    } catch (error) {
+        console.error("No se pudo guardar el nuevo usuario.", error);
+        return false;
+    }
     usuarios.push(usuario);
+    return true;
 }
 
-function actualizarUsuario(usuarioActualizado) {
-    const indice = usuarios.findIndex(usuario => usuario.run === usuarioActualizado.run);
+export function actualizarUsuario(usuarioActualizado) {
+    const indice = usuarios.findIndex(usuario => usuario.run.toUpperCase() === usuarioActualizado.run.toUpperCase());
     if (indice < 0) return false;
 
-    usuarios[indice] = { ...usuarios[indice], ...usuarioActualizado };
-    const usuariosGuardados = usuarios.filter(usuario =>
-        !usuariosGuardadosBase.some(base => base.run === usuario.run)
+    const duplicado = usuarios.some((usuario, index) =>
+        index !== indice &&
+        (usuario.correo.toLowerCase() === usuarioActualizado.correo.toLowerCase() ||
+            usuario.run.toUpperCase() === usuarioActualizado.run.toUpperCase())
     );
-    const baseEditado = usuarios.find(usuario =>
-        usuariosGuardadosBase.some(base => base.run === usuario.run)
+    if (duplicado) return false;
+
+    const usuariosActualizados = usuarios.map((usuario, index) =>
+        index === indice ? { ...usuario, ...usuarioActualizado } : usuario
     );
-    if (baseEditado) usuariosGuardados.push(baseEditado);
-    localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuariosGuardados));
+    try {
+        localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuariosActualizados));
+    } catch (error) {
+        console.error("No se pudieron guardar los cambios del usuario.", error);
+        return false;
+    }
+    usuarios[indice] = usuariosActualizados[indice];
+    return true;
+}
+
+export function eliminarUsuario(run) {
+    const indice = usuarios.findIndex(usuario => usuario.run.toUpperCase() === run.toUpperCase());
+    if (indice < 0) return false;
+
+    const usuario = usuarios[indice];
+    if (usuario.tipo === "Administrador" && usuarios.filter(item => item.tipo === "Administrador").length <= 1) {
+        return false;
+    }
+
+    const usuariosActualizados = usuarios.filter((_, index) => index !== indice);
+    try {
+        const eliminados = JSON.parse(localStorage.getItem(CLAVE_USUARIOS_ELIMINADOS) || "[]");
+        if (!eliminados.includes(usuario.run.toUpperCase())) eliminados.push(usuario.run.toUpperCase());
+        localStorage.setItem(CLAVE_USUARIOS_ELIMINADOS, JSON.stringify(eliminados));
+        localStorage.setItem(CLAVE_USUARIOS, JSON.stringify(usuariosActualizados));
+    } catch (error) {
+        console.error("No se pudo eliminar el usuario.", error);
+        return false;
+    }
+    usuarios.splice(indice, 1);
     return true;
 }

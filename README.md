@@ -5,7 +5,24 @@ Realizado por:
 - Cristóbal Zúñiga
 
 # Estructura final
-```
+
+# Accesos de demostración
+
+- Administrador: `vale.rodrigueza@duoc.cl` / `1234567`
+- Vendedor: `vendedor@duoc.cl` / `123456`
+- Cliente: `ejemplo@gmail.com` / `123456`
+
+Para finalizar una compra es necesario iniciar sesión. Puedes agregar productos a la bolsa antes de entrar; la bolsa se conserva al iniciar sesión.
+
+El panel restringe las vistas según el tipo de usuario. Como este proyecto es una demostración frontend, las cuentas y la sesión se guardan en el navegador; no se deben usar estas credenciales ni este mecanismo en producción.
+
+## Módulos administrativos
+
+El administrador puede gestionar productos, categorías, usuarios, órdenes y boletas; revisar stock crítico y reportes; y actualizar su perfil. El vendedor tiene acceso limitado a productos y órdenes. Los cambios administrativos se conservan en el almacenamiento local del navegador.
+
+Las cuentas de demostración y los cambios guardados localmente son solo para pruebas; no reemplazan una API ni una base de datos.
+
+```text
 skyrim-emporium-react/
 ├── public/
 │   └── assets/img/...
@@ -70,4 +87,3 @@ skyrim-emporium-react/
 ├── .babelrc
 └── package.json
 ```
-

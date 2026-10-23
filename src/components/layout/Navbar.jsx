@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { configuracionGremios } from "../../data/gremios";
@@ -6,6 +6,12 @@ import { configuracionGremios } from "../../data/gremios";
 export default function Navbar({ onOpenCart }) {
   const { count } = useCart();
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  function cerrarSesion() {
+    logout();
+    navigate("/", { replace: true });
+  }
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top border-bottom border-secondary">
@@ -47,7 +53,12 @@ export default function Navbar({ onOpenCart }) {
               {user ? (
                 <div className="d-flex align-items-center gap-2">
                   <span className="text-warning small">{user.tipo}</span>
-                  <button className="btn btn-outline-danger btn-sm" onClick={logout}>Salir</button>
+                  {user.tipo !== "Cliente" && (
+                    <Link className="btn btn-outline-warning btn-sm" to="/admin">
+                      {user.tipo === "Vendedor" ? "Vista vendedor" : "Panel admin"}
+                    </Link>
+                  )}
+                  <button className="btn btn-outline-danger btn-sm" onClick={cerrarSesion} type="button">Salir</button>
                 </div>
               ) : (
                 <NavLink className="nav-link text-warning" to="/login">Iniciar sesión</NavLink>

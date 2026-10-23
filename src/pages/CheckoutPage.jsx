@@ -4,7 +4,8 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { regionesChile } from "../data/datos-usuarios";
 import { imagenCatalogo } from "../utils/imagenes";
-import { actualizarStockProducto } from "../data/inventario";
+import { actualizarStockProducto, obtenerProductoInventario } from "../data/inventario";
+import { eliminarOrden, guardarOrden } from "./admin/ordenes.js";
 
 const CORREO_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const formatoOro = (n) => Number(n).toLocaleString("es-CL");
@@ -82,9 +83,48 @@ export default function CheckoutPage() {
       console.log("4. Resultado del pago:", pagoExitoso ? "ÉXITO" : "ERROR");
 
       if (pagoExitoso) {
-        cart.forEach((item) => {
-          actualizarStockProducto(item.id, item.qty); //Descuenta el stock al pagar
-        });
+        const stockDisponible = cart.every((item) =>
+          Number(obtenerProductoInventario(item.id, item.gremio)?.stock ?? 0) >= item.qty
+        );
+        if (!stockDisponible) {
+          console.error("No se pudo completar la compra porque el stock cambió durante el pago.");
+          navigate("/pago-error");
+          return;
+        }
+
+        const orden = {
+          id: pedido.numero,
+          cliente: `${datos.nombre} ${datos.apellidos}`.trim(),
+          clienteRun: user?.run,
+          correo: datos.correo,
+          fecha: new Date().toISOString(),
+          estado: "Pagada",
+          items: cart.map((item) => ({
+            id: item.id,
+            nombre: item.name,
+            cantidad: item.qty,
+            precio: item.price,
+            total: item.price * item.qty,
+          })),
+          total: pedido.total,
+        };
+
+        if (!guardarOrden(orden)) {
+          console.error("No se pudo confirmar la orden en el registro local.");
+          navigate("/pago-error");
+          return;
+        }
+
+        const stockActualizado = cart.every((item) =>
+          actualizarStockProducto(item.id, item.qty, item.gremio)
+        );
+        if (!stockActualizado) {
+          eliminarOrden(orden.id);
+          console.error("No se pudo actualizar el stock de todos los productos.");
+          navigate("/pago-error");
+          return;
+        }
+
         clear(); //Vacía el carrito
         navigate("/pago-exitoso");
       } else {

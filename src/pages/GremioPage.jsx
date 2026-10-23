@@ -15,15 +15,11 @@ export default function GremioPage() {
   const [busqueda, setBusqueda] = useState("");
   const [productoSeleccionado, setProductoSeleccionado] = useState(null);
 
-  if (!config) {
-    return <div className="container py-5 text-center text-danger"><h2>Gremio no encontrado</h2></div>;
-  }
-
-  const catalogo = inventario[config.categoria] || [];
-
   const productosFiltrados = useMemo(() => {
+    if (!config) return [];
+    const catalogo = inventario[config.categoria] || [];
     const todos = catalogo.flatMap(seccion => 
-      seccion.items.map(item => ({ ...item, categoriaSeccion: seccion.titulo }))
+      seccion.items.map(item => ({ ...item, gremio: config.categoria, categoriaSeccion: seccion.titulo }))
     );
 
     return todos.filter((producto) => {
@@ -37,7 +33,13 @@ export default function GremioPage() {
 
       return cumpleFiltro && cumpleBusqueda;
     });
-  }, [catalogo, filtro, busqueda, config]);
+  }, [filtro, busqueda, config]);
+
+  if (!config) {
+    return <div className="container py-5 text-center text-danger"><h2>Gremio no encontrado</h2></div>;
+  }
+
+  const catalogo = inventario[config.categoria] || [];
 
   const totalProductos = catalogo.reduce((total, seccion) => total + seccion.items.length, 0);
 

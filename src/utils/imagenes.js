@@ -1,5 +1,6 @@
 export function imagenCatalogo(ruta) {
     if (!ruta) return "";
+    if (/^(data:|https?:|blob:)/i.test(ruta)) return ruta;
     return `/${ruta}`
     .replace("assets/img/Alquimia/Ingredients/", "assets/img/Alquimia/Ingredientes/")
     .replace("assets/img/Herreria/Armas/Arquería/", "assets/img/Herreria/Armas/Arqueria/")
