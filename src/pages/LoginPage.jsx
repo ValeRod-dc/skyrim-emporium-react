@@ -49,6 +49,7 @@ export default function LoginPage() {
             id="login-email"
             maxLength={100}
             onChange={(event) => setCorreo(event.target.value)}
+            placeholder="correo@example.com"
             type="email"
             value={correo}
           />
@@ -59,6 +60,7 @@ export default function LoginPage() {
             id="login-password"
             maxLength={10}
             onChange={(event) => setContrasena(event.target.value)}
+            placeholder="Ingresa tu contraseña"
             type="password"
             value={contrasena}
           />

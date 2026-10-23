@@ -70,16 +70,6 @@ function App() {
         </Route>
       </Route>
 
-      {/*
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<AdminHomePage />} />
-        <Route path="productos" element={<ProductosAdminPage />} />
-        <Route path="usuarios" element={<UsuariosAdminPage />} />
-        <Route path="ordenes" element={<OrdenesAdminPage />} />
-        <Route path="nuevo-producto" element={<NuevoProductoPage />} />
-      </Route>
-      */}
-
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

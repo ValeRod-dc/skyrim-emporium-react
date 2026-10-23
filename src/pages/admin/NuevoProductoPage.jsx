@@ -127,23 +127,23 @@ export default function NuevoProductoPage() {
           <div className="admin-form-grid">
             <div className="admin-field">
               <label htmlFor="product-code">Código</label>
-              <input id="product-code" maxLength={80} name="codigo" onChange={actualizarCampo} required value={form.codigo} />
+              <input id="product-code" maxLength={80} name="codigo" onChange={actualizarCampo} placeholder="Ej.: ESP-001" required value={form.codigo} />
             </div>
             <div className="admin-field">
               <label htmlFor="product-name">Nombre</label>
-              <input id="product-name" maxLength={100} name="nombre" onChange={actualizarCampo} required value={form.nombre} />
+              <input id="product-name" maxLength={100} name="nombre" onChange={actualizarCampo} placeholder="Ej.: Espada de hierro" required value={form.nombre} />
             </div>
             <div className="admin-field">
               <label htmlFor="product-price">Precio en oro</label>
-              <input id="product-price" min="0" name="precio" onChange={actualizarCampo} required type="number" value={form.precio} />
+              <input id="product-price" min="0" name="precio" onChange={actualizarCampo} placeholder="Ej.: 250" required type="number" value={form.precio} />
             </div>
             <div className="admin-field">
               <label htmlFor="product-stock">Stock</label>
-              <input id="product-stock" min="0" name="stock" onChange={actualizarCampo} required type="number" value={form.stock} />
+              <input id="product-stock" min="0" name="stock" onChange={actualizarCampo} placeholder="Ej.: 10" required type="number" value={form.stock} />
             </div>
             <div className="admin-field">
               <label htmlFor="product-critical-stock">Stock crítico</label>
-              <input id="product-critical-stock" min="0" name="stockCritico" onChange={actualizarCampo} required type="number" value={form.stockCritico} />
+              <input id="product-critical-stock" min="0" name="stockCritico" onChange={actualizarCampo} placeholder="Ej.: 3" required type="number" value={form.stockCritico} />
             </div>
             <div className="admin-field">
               <label htmlFor="product-guild">Gremio</label>
@@ -161,7 +161,7 @@ export default function NuevoProductoPage() {
             </div>
             <div className="admin-field">
               <label htmlFor="product-image">Ruta de imagen</label>
-              <input id="product-image" maxLength={500} name="imagen" onChange={actualizarCampo} placeholder="assets/img/..." value={form.imagen} />
+              <input id="product-image" maxLength={500} name="imagen" onChange={actualizarCampo} placeholder="Ej.: assets/img/Herreria/Espada.png" value={form.imagen} />
             </div>
             <div className="admin-field">
               <label htmlFor="product-image-file">O seleccionar imagen</label>
@@ -169,7 +169,7 @@ export default function NuevoProductoPage() {
             </div>
             <div className="admin-field admin-field-wide">
               <label htmlFor="product-description">Descripción</label>
-              <textarea id="product-description" maxLength={500} name="descripcion" onChange={actualizarCampo} value={form.descripcion} />
+              <textarea id="product-description" maxLength={500} name="descripcion" onChange={actualizarCampo} placeholder="Describe brevemente el producto" value={form.descripcion} />
             </div>
           </div>
           {error && <p className="admin-form-error" role="alert">{error}</p>}

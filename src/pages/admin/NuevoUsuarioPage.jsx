@@ -96,23 +96,23 @@ export default function NuevoUsuarioPage() {
           <div className="admin-form-grid">
             <div className="admin-field">
               <label htmlFor="user-run">RUN</label>
-              <input autoComplete="off" id="user-run" maxLength={9} minLength={8} name="run" onChange={actualizarCampo} readOnly={Boolean(usuarioOriginal)} required value={form.run} />
+              <input autoComplete="off" id="user-run" maxLength={9} minLength={8} name="run" onChange={actualizarCampo} placeholder="Ej.: 123456785 (sin puntos ni guion)" readOnly={Boolean(usuarioOriginal)} required value={form.run} />
             </div>
             <div className="admin-field">
               <label htmlFor="user-name">Nombre</label>
-              <input id="user-name" maxLength={50} name="nombre" onChange={actualizarCampo} required value={form.nombre} />
+              <input id="user-name" maxLength={50} name="nombre" onChange={actualizarCampo} placeholder="Ej.: Valeria" required value={form.nombre} />
             </div>
             <div className="admin-field">
               <label htmlFor="user-last-name">Apellidos</label>
-              <input id="user-last-name" maxLength={100} name="apellidos" onChange={actualizarCampo} required value={form.apellidos} />
+              <input id="user-last-name" maxLength={100} name="apellidos" onChange={actualizarCampo} placeholder="Ej.: Rodríguez" required value={form.apellidos} />
             </div>
             <div className="admin-field">
               <label htmlFor="user-email">Correo</label>
-              <input autoComplete="email" id="user-email" maxLength={100} name="correo" onChange={actualizarCampo} required type="email" value={form.correo} />
+              <input autoComplete="email" id="user-email" maxLength={100} name="correo" onChange={actualizarCampo} placeholder="correo@example.com" required type="email" value={form.correo} />
             </div>
             <div className="admin-field">
               <label htmlFor="user-password">Contraseña</label>
-              <input autoComplete="new-password" id="user-password" maxLength={10} minLength={4} name="contrasena" onChange={actualizarCampo} required type="password" value={form.contrasena} />
+              <input autoComplete="new-password" id="user-password" maxLength={10} minLength={4} name="contrasena" onChange={actualizarCampo} placeholder="Entre 4 y 10 caracteres" required type="password" value={form.contrasena} />
             </div>
             <div className="admin-field">
               <label htmlFor="user-birth-date">Fecha de nacimiento</label>
@@ -140,7 +140,7 @@ export default function NuevoUsuarioPage() {
             </div>
             <div className="admin-field admin-field-wide">
               <label htmlFor="user-address">Dirección</label>
-              <textarea id="user-address" maxLength={300} name="direccion" onChange={actualizarCampo} required={!usuarioOriginal} value={form.direccion} />
+              <textarea id="user-address" maxLength={300} name="direccion" onChange={actualizarCampo} placeholder="Ej.: Avenida Skyrim 123" required={!usuarioOriginal} value={form.direccion} />
             </div>
           </div>
           {error && <p className="admin-form-error" role="alert">{error}</p>}

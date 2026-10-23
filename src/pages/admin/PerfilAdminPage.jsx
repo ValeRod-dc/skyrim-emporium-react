@@ -51,9 +51,9 @@ export default function PerfilAdminPage() {
           <div className="admin-form-grid">
             <div className="admin-field"><label htmlFor="profile-run">RUN</label><input id="profile-run" readOnly value={cuenta.run} /></div>
             <div className="admin-field"><label htmlFor="profile-role">Tipo de cuenta</label><input id="profile-role" readOnly value={cuenta.tipo} /></div>
-            <div className="admin-field"><label htmlFor="profile-name">Nombre</label><input id="profile-name" maxLength={50} onChange={(event) => setNombre(event.target.value)} required value={nombre} /></div>
-            <div className="admin-field"><label htmlFor="profile-last-name">Apellidos</label><input id="profile-last-name" maxLength={100} onChange={(event) => setApellidos(event.target.value)} required value={apellidos} /></div>
-            <div className="admin-field"><label htmlFor="profile-email">Correo</label><input autoComplete="email" id="profile-email" maxLength={100} onChange={(event) => setCorreo(event.target.value)} required type="email" value={correo} /></div>
+            <div className="admin-field"><label htmlFor="profile-name">Nombre</label><input id="profile-name" maxLength={50} onChange={(event) => setNombre(event.target.value)} placeholder="Ej.: Valeria" required value={nombre} /></div>
+            <div className="admin-field"><label htmlFor="profile-last-name">Apellidos</label><input id="profile-last-name" maxLength={100} onChange={(event) => setApellidos(event.target.value)} placeholder="Ej.: Rodríguez" required value={apellidos} /></div>
+            <div className="admin-field"><label htmlFor="profile-email">Correo</label><input autoComplete="email" id="profile-email" maxLength={100} onChange={(event) => setCorreo(event.target.value)} placeholder="correo@example.com" required type="email" value={correo} /></div>
           </div>
           {error && <p className="admin-form-error" role="alert">{error}</p>}
           {mensaje && <p className="admin-form-success" role="status">{mensaje}</p>}

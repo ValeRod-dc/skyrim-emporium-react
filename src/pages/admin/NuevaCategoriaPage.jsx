@@ -47,7 +47,7 @@ export default function NuevaCategoriaPage() {
             </div>
             <div className="admin-field">
               <label htmlFor="category-name">Nombre</label>
-              <input id="category-name" maxLength={80} onChange={(event) => setTitulo(event.target.value)} required value={titulo} />
+              <input id="category-name" maxLength={80} onChange={(event) => setTitulo(event.target.value)} placeholder="Ej.: Espadas y armas" required value={titulo} />
             </div>
           </div>
           {error && <p className="admin-form-error" role="alert">{error}</p>}

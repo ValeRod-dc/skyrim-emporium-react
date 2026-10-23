@@ -59,7 +59,7 @@ export default function CategoriasAdminPage() {
                 <td>{categoria.gremio}</td>
                 <td>{editando === categoria.id ? (
                   <form className="admin-inline-form" onSubmit={guardarEdicion}>
-                    <input aria-label="Nombre de categoría" maxLength={80} onChange={(event) => setNombre(event.target.value)} required value={nombre} />
+                    <input aria-label="Nombre de categoría" maxLength={80} onChange={(event) => setNombre(event.target.value)} placeholder="Nombre de categoría" required value={nombre} />
                     <button className="admin-button admin-button-primary" type="submit">Guardar</button>
                     <button className="admin-button admin-button-secondary" onClick={() => setEditando(null)} type="button">Cancelar</button>
                   </form>
