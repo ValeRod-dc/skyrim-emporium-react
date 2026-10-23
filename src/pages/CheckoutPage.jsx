@@ -4,6 +4,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { regionesChile } from "../data/datos-usuarios";
 import { imagenCatalogo } from "../utils/imagenes";
+import { actualizarStockProducto } from "../data/inventario";
 
 const CORREO_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const formatoOro = (n) => Number(n).toLocaleString("es-CL");
@@ -21,7 +22,7 @@ function validar(datos) {
 }
 
 export default function CheckoutPage() {
-  const { cart, total } = useCart();
+  const { cart, total, clear } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -37,6 +38,7 @@ export default function CheckoutPage() {
     indicaciones: "",
   });
   const [errores, setErrores] = useState({});
+  const [procesando, setProcesando] = useState(false);
 
   // Un solo manejador para todos los campos, usando el atributo name.
   // Si cambia la región, se borra la comuna anterior.
@@ -52,9 +54,20 @@ export default function CheckoutPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log("1. Botón presionado. Validando formulario...");
+
     const nuevos = validar(datos);
     setErrores(nuevos);
-    if (Object.keys(nuevos).length > 0) return;
+
+    if (Object.keys(nuevos).length > 0) {
+      console.log("2. Errores de validación encontrados: ", nuevos);
+      window.scrollTo({top: 0, behavior:'smooth'});
+      return;
+    }
+
+    console.log("3. Formulario válido. Procesando pago...");
+    setProcesando(true);
+    
 
     const pedido = {
       numero: Date.now().toString().slice(-8),
@@ -63,7 +76,22 @@ export default function CheckoutPage() {
       total: total(),
     };
     sessionStorage.setItem("skyrim_pedido", JSON.stringify(pedido));
-    navigate("/pago-error"); // temporal: siempre error hasta hacer la Fig. 7
+
+    //Se simula la pasarela de pago (80% de éxito y un 20% de error)
+    setTimeout(() => {
+      const pagoExitoso = Math.random() > 0.2;
+      console.log("4. Resultado del pago:", pagoExitoso ? "ÉXITO" : "ERROR");
+
+      if (pagoExitoso) {
+        cart.forEach((item) => {
+          actualizarStockProducto(item.id, item.qty); //Descuenta el stock al pagar
+        });
+        clear(); //Vacía el carrito
+        navigate("/pago-exitoso");
+      } else {
+        navigate("/pago-error");
+      }
+    }, 1000);
   };
 
   // Comunas de la región elegida (arreglo vacío si aún no hay región)

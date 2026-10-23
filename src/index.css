@@ -2161,7 +2161,29 @@ footer .footer-bottom p {
 @media (max-width: 575.98px) {
   .badge-total { width: 100%; text-align: center; }
 }
+
+/* =========================================================
+   ESTADOS DE PAGO (ÉXITO)
+   ========================================================= */
+.pago-icono-exito {
+  border: 2px solid #4a7c59;
+  color: #4a7c59;
+}
+
+.pago-aviso-exito {
+  border-left: 3px solid #4a7c59;
+  background-color: var(--color-obsidian-alt);
+  color: var(--color-parchment);
+}
+
 /* ---------- Pago con error ---------- */
+.form-compra-campo .error {
+    display: block;
+    color: var(--color-ember-bright, #c65847);
+    font-size: 0.85rem;
+    margin-top: 4px;
+}
+
 .pago-estado {
   display: flex;
   align-items: center;
