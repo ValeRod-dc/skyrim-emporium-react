@@ -60,14 +60,13 @@ export default function CheckoutPage() {
     setErrores(nuevos);
 
     if (Object.keys(nuevos).length > 0) {
-      console.log("2. Errores de validación encontrados: ", nuevos);
-      window.scrollTo({top: 0, behavior:'smooth'});
+      console.log("2. Errores de validación encontrados:", nuevos);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
     console.log("3. Formulario válido. Procesando pago...");
     setProcesando(true);
-    
 
     const pedido = {
       numero: Date.now().toString().slice(-8),
@@ -77,7 +76,7 @@ export default function CheckoutPage() {
     };
     sessionStorage.setItem("skyrim_pedido", JSON.stringify(pedido));
 
-    //Se simula la pasarela de pago (80% de éxito y un 20% de error)
+    // Se simula la pasarela de pago (80% de éxito y un 20% de error)
     setTimeout(() => {
       const pagoExitoso = Math.random() > 0.2;
       console.log("4. Resultado del pago:", pagoExitoso ? "ÉXITO" : "ERROR");
@@ -294,8 +293,8 @@ export default function CheckoutPage() {
 
         <div className="compra-acciones">
           <Link to="/carrito" className="btn-compra-sec">Volver al carrito</Link>
-          <button type="submit" className="btn-compra">
-            Pagar ahora {formatoOro(total())} Oro
+          <button type="submit" className="btn-compra" disabled={procesando}>
+            {procesando ? "Procesando..." : `Pagar ahora ${formatoOro(total())} Oro`}
           </button>
         </div>
       </form>
