@@ -47,6 +47,7 @@ export const usuarios = [
 
 const CLAVE_USUARIOS = "skyrimUsuarios";
 const CLAVE_USUARIOS_ELIMINADOS = "skyrimUsuariosEliminados";
+const normalizarRun = (run) => String(run).replace(/[.-]/g, "").toUpperCase();
 
 try {
     const usuariosGuardados = JSON.parse(localStorage.getItem(CLAVE_USUARIOS) || "[]");
@@ -70,7 +71,7 @@ try {
 
 export function guardarUsuario(usuario) {
     if (usuarios.some(item =>
-        item.run.toUpperCase() === usuario.run.toUpperCase() ||
+        normalizarRun(item.run) === normalizarRun(usuario.run) ||
         item.correo.toLowerCase() === usuario.correo.toLowerCase()
     )) {
         return false;

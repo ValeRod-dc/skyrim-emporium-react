@@ -10,7 +10,7 @@ export default function StockCriticoAdminPage() {
     <section>
       <p className="admin-eyebrow">Inventario</p>
       <h1 className="admin-page-title">Listado de productos críticos</h1>
-      <p className="admin-muted">Productos cuyo stock llegó a su mínimo definido.</p>
+      <p className="admin-muted">Mínimo crítico: 1 unidad para stocks de 0 a 4, 3 unidades de 5 a 19 y 5 unidades desde 20. Se incluyen ejemplos para cada nivel.</p>
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead><tr><th>Producto</th><th>Gremio</th><th>Categoría</th><th>Stock actual</th><th>Mínimo</th><th>Acción</th></tr></thead>

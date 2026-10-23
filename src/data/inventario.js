@@ -912,6 +912,20 @@ export const STOCK_POR_GREMIO = {
   herreria: 5
 };
 
+export function obtenerStockCritico(stock) {
+  const unidades = Number(stock);
+  if (unidades >= 20) return 5;
+  if (unidades >= 5) return 3;
+  return 1;
+}
+
+const PRODUCTOS_STOCK_CRITICO_DEMOSTRACION = [
+  { gremio: "alquimia", id: "curar-enfermedad", stock: 5 },
+  { gremio: "comida", id: "brandi-coloviano", stock: 3 },
+  { gremio: "bienesGenerales", id: "antorcha", stock: 3 },
+  { gremio: "herreria", id: "yelmo-ligero-stalhrim", stock: 1 },
+];
+
 export function esProductoLegendario(producto) {
   const nombre = String(producto.name || producto.nombre || "")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
@@ -927,6 +941,9 @@ function asignarStockInicial() {
           ? 2
           : stockGremio;
       }
+      if (producto.stockCritico === undefined) {
+        producto.stockCritico = obtenerStockCritico(producto.stock);
+      }
     }));
   });
 }
@@ -939,16 +956,37 @@ export function obtenerProductoInventario(id, gremio) {
 }
 
 export function cargarStockGuardado() {
+  let stocks;
   try {
-    const stocks = JSON.parse(localStorage.getItem(CLAVE_STOCK_PRODUCTOS) || "{}");
-    Object.entries(stocks).forEach(([clave, stock]) => {
-      const [gremio, id] = clave.includes("::") ? clave.split("::", 2) : ["", clave];
-      const producto = obtenerProductoInventario(id, gremio || undefined);
-      if (producto) producto.stock = Number(stock);
-    });
+    stocks = JSON.parse(localStorage.getItem(CLAVE_STOCK_PRODUCTOS) || "{}");
   } catch (error) {
     console.error("No se pudo recuperar el stock guardado.", error);
     localStorage.removeItem(CLAVE_STOCK_PRODUCTOS);
+    return;
+  }
+
+  let agregarEjemplos = false;
+  PRODUCTOS_STOCK_CRITICO_DEMOSTRACION.forEach(({ gremio, id, stock }) => {
+    const producto = obtenerProductoInventario(id, gremio);
+    if (!producto) return;
+    const clave = obtenerClaveProducto(producto, gremio);
+    if (stocks[clave] !== undefined) return;
+    stocks[clave] = stock;
+    agregarEjemplos = true;
+  });
+
+  Object.entries(stocks).forEach(([clave, stock]) => {
+    const [gremio, id] = clave.includes("::") ? clave.split("::", 2) : ["", clave];
+    const producto = obtenerProductoInventario(id, gremio || undefined);
+    if (producto) producto.stock = Number(stock);
+  });
+
+  if (agregarEjemplos) {
+    try {
+      localStorage.setItem(CLAVE_STOCK_PRODUCTOS, JSON.stringify(stocks));
+    } catch (error) {
+      console.error("No se pudieron guardar los stocks críticos de ejemplo.", error);
+    }
   }
 }
 
@@ -994,9 +1032,11 @@ export function actualizarProductoAdmin(productoActualizado, gremioOriginal = pr
   }
 
   const origen = inventario[gremioOriginal].find((seccion) => seccion.items.includes(producto));
-  origen.items = origen.items.filter((item) => item !== producto);
+  if (destino !== origen) {
+    origen.items = origen.items.filter((item) => item !== producto);
+  }
   Object.assign(producto, cambios);
-  if (!destino.items.includes(producto)) destino.items.push(producto);
+  if (destino !== origen) destino.items.push(producto);
   return true;
 }
 
@@ -1041,6 +1081,7 @@ export function cargarProductosAdmin() {
         gremio.push(seccion);
       }
       if (!seccion.items.some(item => item.id === producto.id)) {
+        producto.stockCritico ??= obtenerStockCritico(producto.stock ?? 0);
         seccion.items.push(producto);
       }
     });

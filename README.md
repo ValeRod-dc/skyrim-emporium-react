@@ -20,6 +20,8 @@ El panel restringe las vistas según el tipo de usuario. Como este proyecto es u
 
 El administrador puede gestionar productos, categorías, usuarios, órdenes y boletas; revisar stock crítico y reportes; y actualizar su perfil. El vendedor tiene acceso limitado a productos y órdenes. Los cambios administrativos se conservan en el almacenamiento local del navegador.
 
+El historial del vendedor de demostración incluye una compra de ejemplo si todavía no tiene órdenes; esta no modifica el stock ni los reportes de ventas. Los umbrales de stock crítico predeterminados son 1 unidad para un stock de 0 a 4, 3 unidades de 5 a 19 y 5 unidades desde 20. Se cargan ejemplos de productos críticos al iniciar una instalación nueva.
+
 Las cuentas de demostración y los cambios guardados localmente son solo para pruebas; no reemplazan una API ni una base de datos.
 
 ```text

@@ -3,6 +3,7 @@ import Layout from "./components/layout/Layout.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import GremioPage from "./pages/GremioPage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
+import RegistroPage from "./pages/RegistroPage.jsx";
 import CarritoPage from "./pages/CarritoPage.jsx";
 import CheckoutPage from "./pages/CheckoutPage.jsx";
 import PagoErrorPage from "./pages/PagoErrorPage.jsx";
@@ -32,6 +33,7 @@ function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/registro" element={<RegistroPage />} />
 
       <Route element={<Layout />}>
         <Route path="/" element={<HomePage />} />

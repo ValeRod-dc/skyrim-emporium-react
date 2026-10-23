@@ -1,9 +1,21 @@
-import { Link, useParams } from "react-router";
+import { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router";
 import { usuarios } from "../../data/datos-usuarios.js";
+import { asegurarOrdenDemostracion } from "./ordenes.js";
 
 export default function UsuarioDetalleAdminPage() {
   const { run } = useParams();
   const usuario = usuarios.find((item) => item.run.toUpperCase() === run?.toUpperCase());
+  const navigate = useNavigate();
+  const [error, setError] = useState("");
+
+  function abrirHistorial() {
+    if (usuario?.tipo === "Vendedor" && !asegurarOrdenDemostracion(usuario)) {
+      setError("No se pudo guardar la compra de ejemplo del vendedor.");
+      return;
+    }
+    navigate(`/admin/usuarios/${encodeURIComponent(usuario.run)}/historial`);
+  }
 
   if (!usuario) {
     return <section><h1 className="admin-page-title">Usuario no encontrado</h1><Link to="/admin/usuarios">Volver a usuarios</Link></section>;
@@ -23,8 +35,9 @@ export default function UsuarioDetalleAdminPage() {
       </div>
       <div className="admin-detail-actions">
         <Link className="admin-button admin-button-primary" to={`/admin/nuevo-usuario?run=${encodeURIComponent(usuario.run)}`}>Editar usuario</Link>
-        {usuario.tipo === "Cliente" && <Link className="admin-button admin-button-secondary" to={`/admin/usuarios/${encodeURIComponent(usuario.run)}/historial`}>Historial de compras</Link>}
+        <button className="admin-button admin-button-secondary" onClick={abrirHistorial} type="button">Historial de compras</button>
       </div>
+      {error && <p className="admin-form-error" role="alert">{error}</p>}
     </section>
   );
 }

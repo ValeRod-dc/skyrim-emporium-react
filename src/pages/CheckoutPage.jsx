@@ -32,10 +32,10 @@ export default function CheckoutPage() {
     nombre: user?.nombre ?? "",
     apellidos: user?.apellidos ?? "",
     correo: user?.correo ?? "",
-    calle: "",
+    calle: user?.direccion ?? "",
     departamento: "",
-    region: "",
-    comuna: "",
+    region: user?.region ?? "",
+    comuna: user?.comuna ?? "",
     indicaciones: "",
   });
   const [errores, setErrores] = useState({});

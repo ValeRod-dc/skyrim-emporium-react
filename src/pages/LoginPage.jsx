@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./admin/admin.css";
 
@@ -12,6 +12,7 @@ function destinoPorRol(tipo) {
 export default function LoginPage() {
   const { user, login } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState("");
@@ -68,6 +69,12 @@ export default function LoginPage() {
           {error && <p className="admin-form-error" role="alert">{error}</p>}
           <button className="admin-button admin-button-primary w-100" type="submit">Entrar a Skyrim</button>
         </form>
+        {searchParams.get("registro") === "ok" && (
+          <p className="admin-form-success" role="status">Cuenta creada. Ya puedes iniciar sesión.</p>
+        )}
+        <p className="admin-login-register">
+          ¿No tienes cuenta? <Link to="/registro">Regístrate</Link>
+        </p>
       </section>
     </main>
   );

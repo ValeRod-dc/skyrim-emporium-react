@@ -4,11 +4,12 @@ import { leerOrdenes, formatoFecha } from "./ordenes.js";
 
 export default function ReportesAdminPage() {
   const ordenes = leerOrdenes().slice().reverse();
+  const ordenesReales = ordenes.filter((orden) => !orden.demostracion);
   const productos = obtenerTodosLosProductos();
-  const ingresos = ordenes.reduce((total, orden) => total + Number(orden.total || 0), 0);
+  const ingresos = ordenesReales.reduce((total, orden) => total + Number(orden.total || 0), 0);
   const unidadesVendidas = new Map();
 
-  ordenes.forEach((orden) => (orden.items || []).forEach((item) => {
+  ordenesReales.forEach((orden) => (orden.items || []).forEach((item) => {
     const nombre = item.nombre || item.name || item.id || "Producto";
     const venta = unidadesVendidas.get(nombre) || { nombre, unidades: 0, ingresos: 0 };
     venta.unidades += Number(item.cantidad ?? item.qty ?? 0);
@@ -28,7 +29,7 @@ export default function ReportesAdminPage() {
       <p className="admin-muted">Resumen de ventas registradas y estado del inventario.</p>
       <div className="admin-card-grid">
         <article className="admin-stat-card"><span>Ingresos registrados</span><strong>{ingresos.toLocaleString("es-CL")} Oro</strong><small>Basado en órdenes guardadas</small></article>
-        <article className="admin-stat-card"><span>Órdenes</span><strong>{ordenes.length}</strong><small>Compras registradas</small></article>
+        <article className="admin-stat-card"><span>Órdenes</span><strong>{ordenesReales.length}</strong><small>Compras registradas</small></article>
         <article className="admin-stat-card"><span>Stock crítico</span><strong>{criticos}</strong><small><Link to="/admin/stock-critico">Ver productos críticos →</Link></small></article>
       </div>
       <h2 className="admin-section-title">Productos más vendidos</h2>
@@ -46,10 +47,10 @@ export default function ReportesAdminPage() {
         <table className="admin-table">
           <thead><tr><th>Número</th><th>Cliente</th><th>Fecha</th><th>Total</th></tr></thead>
           <tbody>
-            {ordenes.slice(0, 5).map((orden) => (
+            {ordenesReales.slice(0, 5).map((orden) => (
               <tr key={orden.id}><td><Link to={`/admin/ordenes/${encodeURIComponent(orden.id)}`}>#{orden.id}</Link></td><td>{orden.cliente || "Viajero"}</td><td>{formatoFecha(orden.fecha)}</td><td>{Number(orden.total || 0).toLocaleString("es-CL")} Oro</td></tr>
             ))}
-            {!ordenes.length && <tr><td className="admin-empty" colSpan="4">No hay órdenes registradas.</td></tr>}
+            {!ordenesReales.length && <tr><td className="admin-empty" colSpan="4">No hay órdenes registradas.</td></tr>}
           </tbody>
         </table>
       </div>

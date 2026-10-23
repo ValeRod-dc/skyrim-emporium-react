@@ -5,6 +5,7 @@ import {
   buscarProductoPorId,
   guardarProductoAdmin,
   inventario,
+  obtenerStockCritico,
   obtenerTodosLosProductos,
 } from "../../data/inventario.js";
 
@@ -24,7 +25,7 @@ function crearFormulario(producto) {
     descripcion: producto?.description || "",
     precio: producto?.price ?? "",
     stock: producto?.stock ?? 0,
-    stockCritico: producto?.stockCritico ?? 0,
+    stockCritico: producto?.stockCritico ?? obtenerStockCritico(producto?.stock ?? 0),
     gremio: producto?.gremio || "",
     categoria: producto?.categoria || "",
     imagen: producto?.image || "",
@@ -46,6 +47,10 @@ export default function NuevoProductoPage() {
     if (name === "gremio") {
       setCategorias(inventario[value] || []);
       setForm((actual) => ({ ...actual, gremio: value, categoria: "" }));
+      return;
+    }
+    if (name === "stock") {
+      setForm((actual) => ({ ...actual, stock: value, stockCritico: obtenerStockCritico(value) }));
       return;
     }
     setForm((actual) => ({ ...actual, [name]: value }));

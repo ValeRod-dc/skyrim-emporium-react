@@ -6,10 +6,11 @@ import { leerOrdenes } from "./ordenes.js";
 export default function AdminHomePage() {
   const productos = obtenerTodosLosProductos();
   const ordenes = leerOrdenes();
-  const ingresos = ordenes.reduce((total, orden) => total + Number(orden.total || 0), 0);
+  const ordenesReales = ordenes.filter((orden) => !orden.demostracion);
+  const ingresos = ordenesReales.reduce((total, orden) => total + Number(orden.total || 0), 0);
 
   const tarjetas = [
-    { titulo: "Órdenes / boletas", valor: `${ingresos.toLocaleString("es-CL")} Oro`, detalle: `${ordenes.length} órdenes registradas`, ruta: "/admin/ordenes" },
+    { titulo: "Órdenes / boletas", valor: `${ingresos.toLocaleString("es-CL")} Oro`, detalle: `${ordenesReales.length} órdenes registradas`, ruta: "/admin/ordenes" },
     { titulo: "Productos", valor: productos.length, detalle: "Revisar inventario", ruta: "/admin/productos" },
     { titulo: "Usuarios", valor: usuarios.length, detalle: "Administrar cuentas", ruta: "/admin/usuarios" },
   ];
