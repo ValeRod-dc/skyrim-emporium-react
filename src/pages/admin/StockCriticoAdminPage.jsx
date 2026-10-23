@@ -20,7 +20,9 @@ export default function StockCriticoAdminPage() {
                 <td>{producto.name}</td><td>{producto.gremio}</td><td>{producto.categoria}</td>
                 <td><strong className="admin-stock-alert">{producto.stock ?? 0}</strong></td>
                 <td>{producto.stockCritico ?? 0}</td>
-                <td><Link to={`/admin/nuevo-producto?id=${encodeURIComponent(producto.id)}&gremio=${encodeURIComponent(producto.gremio)}`}>Actualizar</Link></td>
+                <td className="admin-actions-cell">
+                  <Link className="admin-btn-accion admin-btn-actualizar" to={`/admin/nuevo-producto?id=${encodeURIComponent(producto.id)}&gremio=${encodeURIComponent(producto.gremio)}`}>Actualizar</Link>
+                </td>
               </tr>
             ))}
             {!productos.length && <tr><td className="admin-empty" colSpan="6">No hay productos con stock crítico.</td></tr>}

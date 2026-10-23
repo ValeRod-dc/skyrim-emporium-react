@@ -97,13 +97,16 @@ export default function ProductosAdminPage() {
                   <td>{Number(producto.price).toLocaleString("es-CL")} Oro</td>
                   <td>{stock}{stock <= critico && <span className="admin-stock-alert"> · Stock crítico</span>}</td>
                   <td>{nombresGremios[producto.gremio] || producto.gremio} · {producto.categoria}</td>
-                  <td>{user?.tipo === "Administrador"
-                    ? <>
-                      <Link to={`/admin/nuevo-producto?id=${encodeURIComponent(producto.id)}&gremio=${encodeURIComponent(producto.gremio)}`}>Editar</Link>
-                      {" · "}
-                      <button className="admin-link-button admin-link-danger" onClick={() => eliminar(producto)} type="button">Eliminar</button>
-                    </>
-                    : "Solo lectura"}</td>
+                  <td className="admin-actions-cell">
+                    {user?.tipo === "Administrador" ? (
+                      <>
+                        <Link className="admin-btn-accion admin-btn-editar" to={`/admin/nuevo-producto?id=${encodeURIComponent(producto.id)}&gremio=${encodeURIComponent(producto.gremio)}`}>Editar</Link>
+                        <button className="admin-btn-accion admin-btn-eliminar" onClick={() => eliminar(producto)} type="button">Eliminar</button>
+                      </>
+                    ) : (
+                      "Solo lectura"
+                    )}
+                  </td>
                 </tr>
               );
             })}

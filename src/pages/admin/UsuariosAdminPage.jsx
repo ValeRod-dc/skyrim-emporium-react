@@ -45,11 +45,9 @@ export default function UsuariosAdminPage() {
                 <td>{usuario.correo}</td>
                 <td>{usuario.tipo}</td>
                 <td className="admin-actions-cell">
-                  <Link to={`/admin/usuarios/${encodeURIComponent(usuario.run)}`}>Ver</Link>
-                  {" · "}
-                  <Link to={`/admin/nuevo-usuario?run=${encodeURIComponent(usuario.run)}`}>Editar</Link>
-                  {" · "}
-                  <button className="admin-link-button admin-link-danger" disabled={usuario.run === user?.run} onClick={() => eliminar(usuario)} type="button">Eliminar</button>
+                  <Link className="admin-btn-accion admin-btn-ver" to={`/admin/usuarios/${encodeURIComponent(usuario.run)}`}>Ver</Link>
+                  <Link className="admin-btn-accion admin-btn-editar" to={`/admin/nuevo-usuario?run=${encodeURIComponent(usuario.run)}`}>Editar</Link>
+                  <button className="admin-btn-accion admin-btn-eliminar" disabled={usuario.run === user?.run} onClick={() => eliminar(usuario)} type="button">Eliminar</button>
                 </td>
               </tr>
             ))}

@@ -20,7 +20,7 @@ export default function AdminLayout() {
         </Link>
         <div className="admin-topbar-user">
           <span>{user?.nombre} · {user?.tipo}</span>
-          <Link className="admin-button admin-button-secondary" to="/">Ir a la tienda</Link>
+          <Link className="admin-button admin-button-primary" to="/">Ir a la tienda</Link>
           <button className="admin-button admin-button-danger" onClick={cerrarSesion} type="button">Salir</button>
         </div>
       </header>

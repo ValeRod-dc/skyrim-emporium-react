@@ -65,10 +65,16 @@ export default function CategoriasAdminPage() {
                   </form>
                 ) : categoria.titulo}</td>
                 <td>{categoria.productos}</td>
-                <td>
-                  {editando !== categoria.id && <button className="admin-link-button" onClick={() => iniciarEdicion(categoria)} type="button">Editar</button>}
-                  {" "}
-                  <button className="admin-link-button admin-link-danger" disabled={categoria.productos > 0} onClick={() => eliminar(categoria)} type="button">Eliminar</button>
+                
+                <td className="admin-actions-cell">
+                  {editando !== categoria.id && (
+                    <button className="admin-btn-accion admin-btn-editar" onClick={() => iniciarEdicion(categoria)} type="button">
+                      Editar
+                    </button>
+                  )}
+                  <button className="admin-btn-accion admin-btn-eliminar" disabled={categoria.productos > 0} onClick={() => eliminar(categoria)} type="button">
+                    Eliminar
+                  </button>
                 </td>
               </tr>
             ))}

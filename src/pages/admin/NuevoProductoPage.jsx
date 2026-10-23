@@ -179,7 +179,7 @@ export default function NuevoProductoPage() {
           </div>
           {error && <p className="admin-form-error" role="alert">{error}</p>}
           <div className="admin-form-actions">
-            <Link className="admin-button admin-button-secondary" to="/admin/productos">Cancelar</Link>
+            <Link className="admin-button admin-button-danger" to="/admin/productos">Cancelar</Link>
             <button className="admin-button admin-button-primary" type="submit">{idEdicion ? "Actualizar producto" : "Guardar producto"}</button>
           </div>
         </form>

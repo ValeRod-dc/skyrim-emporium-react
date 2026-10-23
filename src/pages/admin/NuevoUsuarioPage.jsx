@@ -145,7 +145,7 @@ export default function NuevoUsuarioPage() {
           </div>
           {error && <p className="admin-form-error" role="alert">{error}</p>}
           <div className="admin-form-actions">
-            <Link className="admin-button admin-button-secondary" to="/admin/usuarios">Cancelar</Link>
+            <Link className="admin-button admin-button-danger" to="/admin/usuarios">Cancelar</Link>
             <button className="admin-button admin-button-primary" type="submit">{usuarioOriginal ? "Actualizar usuario" : "Guardar usuario"}</button>
           </div>
         </form>

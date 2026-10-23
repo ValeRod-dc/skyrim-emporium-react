@@ -58,7 +58,7 @@ export default function PerfilAdminPage() {
           {error && <p className="admin-form-error" role="alert">{error}</p>}
           {mensaje && <p className="admin-form-success" role="status">{mensaje}</p>}
           <div className="admin-form-actions">
-            <Link className="admin-button admin-button-secondary" to="/admin/inicio">Cancelar</Link>
+            <Link className="admin-button admin-button-danger" to="/admin/inicio">Cancelar</Link>
             <button className="admin-button admin-button-primary" type="submit">Guardar cambios</button>
           </div>
         </form>

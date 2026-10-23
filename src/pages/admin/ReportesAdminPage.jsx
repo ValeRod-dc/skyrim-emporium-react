@@ -30,7 +30,11 @@ export default function ReportesAdminPage() {
       <div className="admin-card-grid">
         <article className="admin-stat-card"><span>Ingresos registrados</span><strong>{ingresos.toLocaleString("es-CL")} Oro</strong><small>Basado en órdenes guardadas</small></article>
         <article className="admin-stat-card"><span>Órdenes</span><strong>{ordenesReales.length}</strong><small>Compras registradas</small></article>
-        <article className="admin-stat-card"><span>Stock crítico</span><strong>{criticos}</strong><small><Link to="/admin/stock-critico">Ver productos críticos →</Link></small></article>
+        <Link className="admin-stat-card" to="/admin/stock-critico">
+          <span>Stock crítico</span>
+          <strong>{criticos}</strong>
+          <small>Ver productos críticos →</small>
+        </Link>
       </div>
       <h2 className="admin-section-title">Productos más vendidos</h2>
       <div className="admin-table-wrap">

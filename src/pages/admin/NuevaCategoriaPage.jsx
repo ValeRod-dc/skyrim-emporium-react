@@ -52,7 +52,7 @@ export default function NuevaCategoriaPage() {
           </div>
           {error && <p className="admin-form-error" role="alert">{error}</p>}
           <div className="admin-form-actions">
-            <Link className="admin-button admin-button-secondary" to="/admin/categorias">Cancelar</Link>
+            <Link className="admin-button admin-button-danger" to="/admin/categorias">Cancelar</Link>
             <button className="admin-button admin-button-primary" type="submit">Guardar categoría</button>
           </div>
         </form>

@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700&family=Cinzel:wght@500;600;700&family=EB+Garamond:ital@0;1&display=swap');
-
 /* =========================================================
    01. VARIABLES Y ESTILOS GLOBALES
    ========================================================= */
@@ -93,6 +91,7 @@ p.subtitulo {
 
 .navbar {
   padding: 0 20px;
+ min-height: 50px;
 }
 .navbar .container {
   max-width: 100%;
