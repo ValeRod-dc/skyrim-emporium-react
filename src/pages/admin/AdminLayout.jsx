@@ -8,8 +8,8 @@ export default function AdminLayout() {
   const esAdministrador = user?.tipo === "Administrador";
 
   function cerrarSesion() {
-    logout();
     navigate("/", { replace: true });
+    logout();
   }
 
   return (
